@@ -12,13 +12,18 @@
 #import <UIKit/UIKit.h>
 #import <CoreLocation/CoreLocation.h>
 
-@interface ViewController : UIViewController<CLLocationManagerDelegate>
+@interface ViewController : UIViewController<CLLocationManagerDelegate,UITableViewDelegate,UITableViewDataSource>
 {
     CLLocationManager *locationManager;
     NSString *kLatitude;
     NSString *kLongitude;
     
+    NSMutableArray *forcast;
+    
 }
+@property (weak, nonatomic) IBOutlet UITableView *tableView;
+
+
 
 @property (weak, nonatomic) IBOutlet UILabel *labelCity;
 

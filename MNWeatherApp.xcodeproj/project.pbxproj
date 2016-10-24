@@ -15,6 +15,7 @@
 		8C569B091DB4D526003CCCEB /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 8C569B071DB4D526003CCCEB /* LaunchScreen.storyboard */; };
 		8C8579011DB5576400A9822B /* MapKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8C8579001DB5576400A9822B /* MapKit.framework */; };
 		8C8579031DB5577900A9822B /* CoreLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8C8579021DB5577900A9822B /* CoreLocation.framework */; };
+		8CA6975D1DB8C6B20067AFB0 /* CustomTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 8CA6975C1DB8C6B20067AFB0 /* CustomTableViewCell.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -30,6 +31,8 @@
 		8C569B0A1DB4D526003CCCEB /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		8C8579001DB5576400A9822B /* MapKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MapKit.framework; path = System/Library/Frameworks/MapKit.framework; sourceTree = SDKROOT; };
 		8C8579021DB5577900A9822B /* CoreLocation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreLocation.framework; path = System/Library/Frameworks/CoreLocation.framework; sourceTree = SDKROOT; };
+		8CA6975B1DB8C6B20067AFB0 /* CustomTableViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CustomTableViewCell.h; sourceTree = "<group>"; };
+		8CA6975C1DB8C6B20067AFB0 /* CustomTableViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CustomTableViewCell.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -70,6 +73,8 @@
 				8C569AFD1DB4D526003CCCEB /* AppDelegate.m */,
 				8C569AFF1DB4D526003CCCEB /* ViewController.h */,
 				8C569B001DB4D526003CCCEB /* ViewController.m */,
+				8CA6975B1DB8C6B20067AFB0 /* CustomTableViewCell.h */,
+				8CA6975C1DB8C6B20067AFB0 /* CustomTableViewCell.m */,
 				8C569B021DB4D526003CCCEB /* Main.storyboard */,
 				8C569B051DB4D526003CCCEB /* Assets.xcassets */,
 				8C569B071DB4D526003CCCEB /* LaunchScreen.storyboard */,
@@ -159,6 +164,7 @@
 			files = (
 				8C569B011DB4D526003CCCEB /* ViewController.m in Sources */,
 				8C569AFE1DB4D526003CCCEB /* AppDelegate.m in Sources */,
+				8CA6975D1DB8C6B20067AFB0 /* CustomTableViewCell.m in Sources */,
 				8C569AFB1DB4D526003CCCEB /* main.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

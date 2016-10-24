@@ -7,6 +7,7 @@
 //
 
 #import "ViewController.h"
+#import "CustomTableViewCell.h"
 
 @interface ViewController ()
 
@@ -17,7 +18,11 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     // Do any additional setup after loading the view, typically from a nib.
-    [self startLocating];
+    forcast = [[NSMutableArray alloc]init];
+    
+    //days = @[@"Sun",@"Mon",@"Tue",@"Wed",@"Thu",@"Fri",@"Sat"];
+    
+    //[self startLocating];
     
 }
 
@@ -25,6 +30,7 @@
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
 }
+
 
 -(void)startLocating {
     
@@ -53,6 +59,11 @@
      kLatitude= [NSString stringWithFormat:@"%f",currentLocation.coordinate.latitude];
     
     kLongitude = [NSString stringWithFormat:@"%f",currentLocation.coordinate.longitude];
+    
+    [self getCurrentWeatherDataWithLatitude:kLatitude.doubleValue longitude:kLongitude.doubleValue APIKey:kWeatherAPIKey];
+    
+    [self getForcastDataWithLatitude:kLatitude.doubleValue longitude:kLongitude.doubleValue APIKey:kWeatherAPIKey];
+
 
     
     if (currentLocation != nil) {
@@ -63,10 +74,98 @@
     
 }
 
--(void)locationManager:(CLLocationManager *)manager didFailWithError:(NSError *)error {
+
+-(void)updateUIWithForcastDictionary:(NSDictionary *)forcastDictionary {
     
-    NSLog(@"%@",error.localizedDescription);
+    // NSLog(@"%@",resultDictionary);
+    
+    NSArray *list = [forcastDictionary valueForKey:@"list"];
+    
+    for(NSDictionary *weatherDetail in list) {
+        
+        NSString *dt = [NSString stringWithFormat:@"%@",[weatherDetail valueForKeyPath:@"dt"]];
+        NSString *max = [NSString stringWithFormat:@"%@",[weatherDetail valueForKeyPath:@"temp.max"]];
+        max = [NSString stringWithFormat:@"MAX : %d °C",max.intValue];
+        NSString *min = [NSString stringWithFormat:@"%@",[weatherDetail valueForKeyPath:@"temp.min"]];
+        min = [NSString stringWithFormat:@"MIN : %d °C",min.intValue];
+        
+        NSDictionary *tempDictionary = @{
+                                         @"max" : max,
+                                         @"min" : min,
+                                         @"dt" : dt
+                                         };
+        
+        
+        NSLog(@"%@",tempDictionary);
+        [forcast addObject:tempDictionary];
+        
+        
+    }
+    
+    if (forcast.count >0) {
+        [self.tableView reloadData];
+    }
 }
+
+
+-(void)getForcastDataWithLatitude:(double) latitude
+                               longitude:(double) longitude
+                                APIKey:(NSString *)key {
+
+
+    NSString *urlString = [NSString stringWithFormat:@"http://api.openweathermap.org/data/2.5/forecast/daily?lat=%f&lon=%f&cnt=7&mode=json&appid=%@",latitude,longitude,key];
+
+    NSLog(@"%@",urlString);
+
+    NSURL *url = [NSURL URLWithString:urlString];
+
+    NSURLSession *mySession = [NSURLSession sessionWithConfiguration:[NSURLSessionConfiguration defaultSessionConfiguration]];
+
+    NSURLSessionDataTask *task = [mySession dataTaskWithURL:url completionHandler:^(NSData * _Nullable data, NSURLResponse * _Nullable response, NSError * _Nullable error) {
+    
+    if (error) {
+        //alert
+    }
+    else {
+        if (response) {
+            
+            NSHTTPURLResponse *httpResponse = (NSHTTPURLResponse *)response;
+            
+            if (httpResponse.statusCode == 200) {
+                
+                if (data) {
+                    //start json parsing
+                    
+                    
+                    NSError *error;
+                    NSDictionary *jsonDictionary = [NSJSONSerialization JSONObjectWithData:data options:0 error:&error];
+                    
+                    if (error) {
+                        //alert
+                    }
+                    else{
+                        
+                        [self performSelectorOnMainThread:@selector(updateUIWithForcastDictionary:) withObject:jsonDictionary waitUntilDone:NO];
+                    }
+                }
+                else {
+                    //alert
+                }
+            }
+            else {
+                //alert
+            }
+        }
+        else {
+            //alert
+        }
+    }
+}];
+
+[task resume];
+
+}
+
 -(void)getCurrentWeatherDataWithLatitude:(double) latitude
                                longitude:(double) longitude
                                   APIKey:(NSString *)key {
@@ -165,8 +264,58 @@
     
 }
 
+
 - (IBAction)getWeatherAction:(id)sender {
-    [locationManager startUpdatingLocation];
-    [self getCurrentWeatherDataWithLatitude:kLatitude.intValue longitude:kLongitude.intValue APIKey:kWeatherAPIKey];
+   
+    [self startLocating];
+    
 }
+
+-(NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
+    return 1;
+}
+
+-(NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
+    //return 7;
+    return forcast.count;
+}
+
+-(UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
+    
+    UITableViewCell *cell = [[UITableViewCell alloc]initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:@"cell"];
+    
+    NSDictionary *tempDictionary = [forcast objectAtIndex:indexPath.row];
+    
+    [tableView setSeparatorColor:[UIColor clearColor]];
+    
+    NSString *dt = [tempDictionary valueForKey:@"dt"];
+    
+    NSLog(@"%@",dt);
+    
+    NSTimeInterval time = dt.doubleValue;
+    
+    NSDate *date = [NSDate dateWithTimeIntervalSince1970:time];
+    
+    NSLog(@"%@",date);
+    
+    NSDateFormatter *dateFormatter = [[NSDateFormatter alloc]init];
+    
+    [dateFormatter setDateFormat:@"dd MMM yyyy HH:mm a Z EEEE"];
+    
+    NSString *day = [dateFormatter stringFromDate:date];
+    
+    NSLog(@"%@",day);
+    
+    cell.textLabel.text = day;
+    cell.detailTextLabel.text = [[[tempDictionary valueForKey:@"max"]stringByAppendingString:@" "]stringByAppendingString:[tempDictionary valueForKey:@"min"]];
+    
+    
+    return cell;
+}
+
+-(CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
+    
+    return tableView.frame.size.height/7;
+}
+
 @end
